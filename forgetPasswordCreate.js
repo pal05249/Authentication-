@@ -66,11 +66,12 @@ app.post("/forgotpassword", function (req, res) {
             //     console.log(error.response.body.errors[0].message)
             // })
             var transport = nodemailer.createTransport({
-                host: "smtp.gmail.com",
-                port: 465,
+                // host: "smtp.gmail.com",
+                // port: 465,
+                service: 'gmail',
                 auth: {
                     user: "pal05249@gmail.com",
-                    pass: "ldpjf1025"
+                    pass: process.env.SENDGRID_PASS
                 }
             });
 

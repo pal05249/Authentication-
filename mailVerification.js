@@ -101,9 +101,9 @@ app.post('/check', function (req, res) {
                             type: 'OAuth2',
                             clientId: "65042886536-kt60ccbn3qdo6v132bh1t38t0ohmkqbe.apps.googleusercontent.com",
                             clientSecret: "dOhd25DXglXeQsOjoszg9mTd",
-                            // refreshToken:""
-                            // accessToken: "https://oauth2.googleapis.com/token",
-                            // expiresIn: 3600000
+                            refreshToken: "1//04bwcQAhSuiSSCgYIARAAGAQSNwF-L9IrrWL9nr9hczweY13JkPwXzjRBbOMJYa6GWo7wB9zhpOIK_KgqsOAd6XpyVTcpx9JuTTU",
+                            accessToken: "ya29.a0AfH6SMCcQnv5vKUXvb9ooYIT5xHpQZsDpOzuOFFKr2PQBF_p1S6qEsl2Mj7PWyi_0Vi0s0vEde43TyVoU-sZPwPiCEw1c_1Cvk_3fwvTVL8faVaPPdWCqScvDfAItX_x8feqfp9OHpcx3F2eoWG6s67i_lYFMKFHKbM",
+                            expiresIn: 3600000
 
                         },
                         tls: {
@@ -112,7 +112,8 @@ app.post('/check', function (req, res) {
                     });
                     const rand = Math.floor((Math.random() * 100) + 54);
 
-                    const link = "http://" + req.get('host') + "/verify?id=" + token.token;
+                    const link = "http://" + req.get('host') + "/verify?id=" + token;
+                    console.log(link)
                     // const link = "http://" + req.get('host') + "/verify?id=" + rand;
                     var mailOptions = {
                         from: 'youremail@gmail.com',
@@ -217,20 +218,39 @@ app.post('/check', function (req, res) {
 
 app.get('/verify', function (req, res) {
     console.log(req.protocol + "://" + req.get('host'));
-    if ((req.protocol + "://" + req.get('host')) == ("http://" + host)) {
-        console.log("Domain is matched. Information is from Authentic email");
-        if (req.query.id == rand) {
-            console.log("email is verified");
-            res.end("<h1>Email " + mailOptions.to + " is been Successfully verified");
-        } else {
-            console.log("email is not verified");
-            res.end("<h1>Bad Request</h1>");
-        }
-    } else {
-        res.end("<h1>Request is from unknown source");
-    }
+    const token = req.query;
+    console.log(token)
+    jwt.verify(token.id, 'secret', function (err, decoded) {
+
+        if (err)
+
+            return res.status(500).send({
+                auth: false,
+                message: 'Failed to authenticate token.'
+            });
+
+        // if everything good, save to request for use in other routes
+
+        req.userId = decoded.id;
+
+        console.log(req.userId)
+
+    });
+
 });
 
+// if ((req.protocol + "://" + req.get('host')) == ("http://" + host)) {
+//         console.log("Domain is matched. Information is from Authentic email");
+//         if (req.query.id == rand) {
+//             console.log("email is verified");
+//             res.end("<h1>Email " + mailOptions.to + " is been Successfully verified");
+//         } else {
+//             console.log("email is not verified");
+//             res.end("<h1>Bad Request</h1>");
+//         }
+//     } else {
+//         res.end("<h1>Request is from unknown source");
+//     }
 
 // app.use(function(req,res,next) {
 //     JWT.verify(req.cookies['token'], 'YOUR_SECRET', function(err, decodedToken) {

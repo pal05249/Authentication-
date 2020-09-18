@@ -4,7 +4,7 @@ const cors = require('cors')
 const app = express();
 const mysql = require('mysql')
 const bcrypt = require('bcrypt')
-const salt = 10;
+const salt = 12;
 const jwt = require('jsonwebtoken')
 
 
@@ -32,27 +32,24 @@ var connection = mysql.createConnection({
 });
 
 app.post('/send', async function (req, res) {
-    let username = req.body.username;
+
     let password = req.body.password
     let email = req.body.email;
     const hashedPassword1 = await bcrypt.hash(password, 10);
+    console.log(hashedPassword1)
 
     // Now we can store the password hash in db.
-    let sql = 'INSERT INTO userdata (username,password,email) VALUES(?,?,?)';
-    connection.query(sql, [username, hashedPassword1, email],
-        function (err, result) {
-            if (err)
-                throw err;
-            else
-            if (result) {
-                console.log("Success")
-                res.json({
-                    'message': 'Success'
-                });
-            }
-
-
-        });
+    let sql = 'INSERT INTO userdata (password,email) VALUES(?,?)';
+    connection.query(sql, [hashedPassword1], email, (err, result) => {
+        if (result) {
+            console.log("Success");
+            res.status(200).json({
+                'message': 'Success'
+            });
+        } else
+        if (err)
+            console.log(err);
+    });
     connection.end();
 
 });
@@ -63,14 +60,14 @@ app.post('/send', async function (req, res) {
 
 
 app.post('/authenticate', function (req, res) {
-    let name = req.body.username;
+    let name = req.body.email;
     let pass = req.body.password;
 
 
 
-    let sql = 'SELECT * FROM userdata WHERE username = ?';
+    let sql = 'SELECT * FROM userdata WHERE email = ?';
     connection.query(sql, [name], function (err, rows, fields) {
-
+        console.log(rows)
         if (rows.length != 0) {
             console.log(rows[0]['password'])
             console.log(pass)
@@ -116,5 +113,5 @@ app.post('/authenticate', function (req, res) {
 app.listen(3000, function (err) {
     if (err)
         console.log(err)
-    else console.log('server is listening to port 3000')
+    else console.log(' Auth server is listening to port 3000')
 })

@@ -94,46 +94,46 @@
 
 
 exports.reset = async function (req, res) {
-    async.waterfall([
-        function (done) {
+            async.waterfall([
+                function (done) {
 
-            let sql =
-                'SEARCH * FROM users WHERE (resetPasswodToken,resetPasswordExpires) values(?,?)'
-            connection.query(sql, [req.params.token, created > today], function (err, user) {
-                if (err) {
-                    console.log(err)
-                } else if (!user) {
-                    req.flash('error', 'Password reset token is invalid or has expired');
-                    return res.redirect('/forgot');
-                }
-                user.password = req.body.password;
-                user.resetPasswordToken = undefined;
-                user.resetPasswordExpires = undefined;
-                done(err, user);
+                    let sql =
+                        'SEARCH * FROM users WHERE (resetPasswodToken,resetPasswordExpires) values(?,?)'
+                    connection.query(sql, [req.params.token, created > today]function (err, user) {
+                        if (err) {
+                            console.log(err)
+                        } else if (!user) {
+                            req.flash('error', 'Password reset token is invalid or has expired');
+                            return res.redirect('/forgot');
+                        }
+                        user.password = req.body.password;
+                        user.resetPasswordToken = undefined;
+                        user.resetPasswordExpires = undefined;
+                        done(err, user);
 
-            });
-        },
-        function (user, done) {
-            var smtpTransport = nodemailer.createTransport('SMTP', {
-                service: 'SendGrid',
-                auth: {
-                    user: 'process.env.SENDGRID_USERNAME',
-                    pass: 'process.env.SENDGRID_PASS'
+                    });
+                },
+                function (user, done) {
+                    var smtpTransport = nodemailer.createTransport('SMTP', {
+                        service: 'SendGrid',
+                        auth: {
+                            user: 'process.env.SENDGRID_USERNAME',
+                            pass: 'process.env.SENDGRID_PASS'
+                        }
+                    });
+                    var mailOptions = {
+                        to: user.email,
+                        from: 'passwordreset@demo.com',
+                        subject: 'Your password has been changed',
+                        text: 'Hello,\n\n' +
+                            'This is a confirmation that the password for your account ' + user.email + ' has just been changed.\n'
+                    };
+                    smtpTransport.sendMail(mailOptions, function (err) {
+                        req.flash('success', 'Success! Your password has been changed.');
+                        done(err);
+                    });
                 }
+            ], function (err) {
+                res.redirect('/');
             });
-            var mailOptions = {
-                to: user.email,
-                from: 'passwordreset@demo.com',
-                subject: 'Your password has been changed',
-                text: 'Hello,\n\n' +
-                    'This is a confirmation that the password for your account ' + user.email + ' has just been changed.\n'
-            };
-            smtpTransport.sendMail(mailOptions, function (err) {
-                req.flash('success', 'Success! Your password has been changed.');
-                done(err);
-            });
-        }
-    ], function (err) {
-        res.redirect('/');
-    });
-}
+            // }

@@ -101,6 +101,7 @@ app.post('/check', function (req, res) {
                             type: 'OAuth2',
                             clientId: "65042886536-kt60ccbn3qdo6v132bh1t38t0ohmkqbe.apps.googleusercontent.com",
                             clientSecret: "dOhd25DXglXeQsOjoszg9mTd",
+                            // refreshToken:""
                             // accessToken: "https://oauth2.googleapis.com/token",
                             // expiresIn: 3600000
 
@@ -111,7 +112,7 @@ app.post('/check', function (req, res) {
                     });
                     const rand = Math.floor((Math.random() * 100) + 54);
 
-                    const link = "http://" + req.get('host') + "/verify?id=" + token;
+                    const link = "http://" + req.get('host') + "/verify?id=" + token.token;
                     // const link = "http://" + req.get('host') + "/verify?id=" + rand;
                     var mailOptions = {
                         from: 'youremail@gmail.com',

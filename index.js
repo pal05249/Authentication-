@@ -1,34 +1,34 @@
-// require('dotenv').config()
+require('dotenv').config()
 
-// var express = require("express");
-// var loginroutes = require('./routes/loginroutes');
-// var bodyParser = require('body-parser');
-// let cors = require('cors')
-// const emailSender = require('./emailSender')
-// // body parser added
-// var app = express();
-// app.use(bodyParser.urlencoded({
-//     extended: true
-// }));
-// app.use(bodyParser.json());
+var express = require("express");
+var loginroutes = require('./routes/loginroutes');
+var bodyParser = require('body-parser');
+let cors = require('cors')
 
-// // Allow cross origin requests
-// app.use(cors())
+// body parser added
+var app = express();
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+app.use(bodyParser.json());
 
-// var router = express.Router();
+// Allow cross origin requests
+app.use(cors())
 
-// // test route
-// router.get('/', function (req, res) {
-//     res.json({
-//         message: 'welcome to our upload module apis'
-//     });
-// });
+var router = express.Router();
 
-// //route to handle user registration
-// router.post('/register', loginroutes.register);
-// router.post('/login', loginroutes.login);
+// test route
+router.get('/', function (req, res) {
+    res.json({
+        message: 'welcome to our upload module apis'
+    });
+});
 
-// app.use('/api', router);
-// app.use('emailSender')
+//route to handle user registration
+router.post('/register', loginroutes.register);
+router.post('/login', loginroutes.login);
 
-// app.listen(4000);
+app.use('/api', router);
+app.use('emailSender')
+
+app.listen(4000);

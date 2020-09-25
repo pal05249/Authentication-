@@ -71,6 +71,74 @@ app.post('/check', function (req, res) {
     let pass = req.body.password;
 
 
+    var passport = require('passport'),
+        GoogleStrategy = require('./google_oauth2'),
+        config = require('../config');
+
+
+
+    //start - To get tokens from g-api
+
+
+
+    passport.use('google-imap', new GoogleStrategy({
+        // clientID: config('google.api.client_id'),
+        clientID: "65042886536-kt60ccbn3qdo6v132bh1t38t0ohmkqbe.apps.googleusercontent.com",
+        // clientSecret: config('google.api.client_secret')
+        clientSecret: "dOhd25DXglXeQsOjoszg9mTd"
+    }, function (accessToken, refreshToken, profile, done) {
+        console.log(accessToken, refreshToken, profile);
+        done(null, {
+            access_token: accessToken,
+            refresh_token: refreshToken,
+            profile: profile
+        });
+    }));
+
+    exports.mount = function (app) {
+        app.get('/add-imap/:address?', function (req, res, next) {
+            passport.authorize('google-imap', {
+                scope: [
+                    'https://mail.google.com/',
+                    'https://www.googleapis.com/auth/userinfo.email'
+                ],
+                callbackURL: config('web.vhost') + '/add-imap',
+                accessType: 'offline',
+                approvalPrompt: 'force',
+                loginHint: req.params.address
+            })(req, res, function () {
+                res.send(req.user);
+            });
+        });
+    };
+
+
+
+    // end - to get tokens from gapi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     let sql = 'SELECT * FROM userdata WHERE email = ?';
     connection.query(sql, [name], function (err, rows, fields) {

@@ -6,6 +6,7 @@ const mysql = require('mysql')
 const bcrypt = require('bcrypt')
 const bodyParser = require('body-parser')
 const async = require('async');
+const verifyToken = require('./jwtMiddleware')
 const {
     JsonWebTokenError
 } = require('jsonwebtoken');
@@ -31,13 +32,13 @@ const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'test',
+    database: 'userdata',
 
 });
 
 
 
-app.post('/insert', async function (req, res) {
+app.post('/insert', verifyToken, async function (req, res) {
 
     let pswd = req.body.password
     let email = req.body.email;
@@ -46,7 +47,7 @@ app.post('/insert', async function (req, res) {
     const hashedPassword1 = await bcrypt.hash(pswd, 10);
 
     var sql =
-        'INSERT INTO userdata(password,email) VALUES(?,?)'
+        'INSERT INTO test(password,email) VALUES(?,?)'
     connection.query(sql, [hashedPassword1, email], function (err, data) {
         if (err) {
             console.log(err)
@@ -66,7 +67,7 @@ app.post('/insert', async function (req, res) {
 
 
 
-app.post('/check', function (req, res) {
+app.post('/check', verifyToken, function (req, res) {
     let name = req.body.email;
     let pass = req.body.password;
 

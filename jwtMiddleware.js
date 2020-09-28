@@ -1,12 +1,12 @@
 var jwt = require('jsonwebtoken');
-var config = require('./config');
+// var config = require('./config');
 
 
 
 
 function verifyToken(req, res, next) {
 
-    var token = req.headers['x-access-token'];
+    const token = req.headers['x-access-token'];
     if (!token)
 
         return res.status(403).send({
@@ -14,7 +14,7 @@ function verifyToken(req, res, next) {
             message: 'No token provided.'
         });
 
-    jwt.verify(token, config.secret, function (err, decoded) {
+    jwt.verify(token, "vedyaSecrets", function (err, decoded) {
 
         if (err)
 

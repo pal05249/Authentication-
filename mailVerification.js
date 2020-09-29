@@ -82,42 +82,64 @@ app.post('/check', verifyToken, function (req, res) {
 
 
 
-    passport.use('google-imap', new GoogleStrategy({
-        // clientID: config('google.api.client_id'),
-        clientID: "65042886536-kt60ccbn3qdo6v132bh1t38t0ohmkqbe.apps.googleusercontent.com",
-        // clientSecret: config('google.api.client_secret')
-        clientSecret: "dOhd25DXglXeQsOjoszg9mTd"
-    }, function (accessToken, refreshToken, profile, done) {
-        console.log(accessToken, refreshToken, profile);
-        done(null, {
-            access_token: accessToken,
-            refresh_token: refreshToken,
-            profile: profile
-        });
-    }));
+    // passport.use('google-imap', new GoogleStrategy({
+    //     // clientID: config('google.api.client_id'),
+    //     clientID: "65042886536-kt60ccbn3qdo6v132bh1t38t0ohmkqbe.apps.googleusercontent.com",
+    //     // clientSecret: config('google.api.client_secret')
+    //     clientSecret: "dOhd25DXglXeQsOjoszg9mTd"
+    // }, function (accessToken, refreshToken, profile, done) {
+    //     console.log(accessToken, refreshToken, profile);
+    //     done(null, {
+    //         access_token: accessToken,
+    //         refresh_token: refreshToken,
+    //         profile: profile
+    //     });
+    // }));
 
-    exports.mount = function (app) {
-        app.get('/add-imap/:address?', function (req, res, next) {
-            passport.authorize('google-imap', {
-                scope: [
-                    'https://mail.google.com/',
-                    'https://www.googleapis.com/auth/userinfo.email'
-                ],
-                callbackURL: config('web.vhost') + '/add-imap',
-                accessType: 'offline',
-                approvalPrompt: 'force',
-                loginHint: req.params.address
-            })(req, res, function () {
-                res.send(req.user);
-            });
-        });
-    };
+    // exports.mount = function (app) {
+    //     app.get('/add-imap/:address?', function (req, res, next) {
+    //         passport.authorize('google-imap', {
+    //             scope: [
+    //                 'https://mail.google.com/',
+    //                 'https://www.googleapis.com/auth/userinfo.email'
+    //             ],
+    //             callbackURL: config('web.vhost') + '/add-imap',
+    //             accessType: 'offline',
+    //             approvalPrompt: 'force',
+    //             loginHint: req.params.address
+    //         })(req, res, function () {
+    //             res.send(req.user);
+    //         });
+    //     });
+    // };
 
 
 
     // end - to get tokens from gapi
 
+    const {
+        google
+    } = require('googleapis');
 
+    const oauth2Client = new google.auth.OAuth2(
+        "65042886536-kt60ccbn3qdo6v132bh1t38t0ohmkqbe.apps.googleusercontent.com",
+        "dOhd25DXglXeQsOjoszg9mTd",
+        "http://localhost:3000/api"
+    );
+
+    // generate a url that asks permissions for Blogger and Google Calendar scopes
+    const scopes = [
+        'https://www.googleapis.com/auth/blogger',
+        'https://www.googleapis.com/auth/calendar'
+    ];
+
+    const url = oauth2Client.generateAuthUrl({
+        // 'online' (default) or 'offline' (gets refresh_token)
+        access_type: 'offline',
+
+        // If you only need one scope you can pass it as a string
+        scope: scopes
+    });
 
 
 

@@ -7,6 +7,8 @@ const bcrypt = require('bcrypt')
 const bodyParser = require('body-parser')
 const async = require('async');
 const verifyToken = require('./jwtMiddleware')
+const googleapis = require("googleapis")
+const gapi = require("./gapi")
 const {
     JsonWebTokenError
 } = require('jsonwebtoken');
@@ -117,44 +119,54 @@ app.post('/check', verifyToken, function (req, res) {
 
     // end - to get tokens from gapi
 
-    const {
-        google
-    } = require('googleapis');
+    // const {
+    //     google
+    // } = require('googleapis');
 
-    const oauth2Client = new google.auth.OAuth2(
-        "65042886536-kt60ccbn3qdo6v132bh1t38t0ohmkqbe.apps.googleusercontent.com",
-        "dOhd25DXglXeQsOjoszg9mTd",
-        "http://localhost:3000/api"
-    );
+    // const oauth2Client = new google.auth.OAuth2(
+    //     "65042886536-kt60ccbn3qdo6v132bh1t38t0ohmkqbe.apps.googleusercontent.com",
+    //     "dOhd25DXglXeQsOjoszg9mTd",
+    //     "http://localhost:3000/api"
+    // );
 
-    // generate a url that asks permissions for Blogger and Google Calendar scopes
-    const scopes = [
-        'https://www.googleapis.com/auth/blogger',
-        'https://www.googleapis.com/auth/calendar'
-    ];
+    // // generate a url that asks permissions for Blogger and Google Calendar scopes
+    // const scopes = [
+    //     'https://www.googleapis.com/auth/blogger',
+    //     'https://www.googleapis.com/auth/calendar'
+    // ];
 
-    const url = oauth2Client.generateAuthUrl({
-        // 'online' (default) or 'offline' (gets refresh_token)
-        access_type: 'offline',
+    // const url = oauth2Client.generateAuthUrl({
+    //     // 'online' (default) or 'offline' (gets refresh_token)
+    //     access_type: 'offline',
 
-        // If you only need one scope you can pass it as a string
-        scope: scopes
-    });
-
-
+    //     // If you only need one scope you can pass it as a string
+    //     scope: scopes
+    // });
 
 
+    // // GET / oauthcallback ? code = {
+    // //     authorizationCode
+    // // }
+
+    // // This will provide an object with the access_token and refresh_token.
+    // // Save these somewhere safe so they can be used at a later time.
+    // const {
+    //     tokens
+    // } = await oauth2Client.getToken(code)
+    // oauth2Client.setCredentials(tokens);
 
 
+    // oauth2Client.on('tokens', (tokens) => {
+    //     if (tokens.refresh_token) {
+    //         // store the refresh_token in my database!
+    //         console.log(tokens.refresh_token);
+    //     }
+    //     console.log(tokens.access_token);
+    // });
 
-
-
-
-
-
-
-
-
+    // oauth2Client.setCredentials({
+    //     refresh_token: `STORED_REFRESH_TOKEN`
+    // });
 
 
 
